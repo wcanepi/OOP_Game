@@ -13,27 +13,41 @@ GAME_WIDTH = 5
 GAME_HEIGHT = 5
 
 #### Put class definitions here ####
-
-class Rock(GameElement):
-    IMAGE = "Rock"
-    SOLID = True
-
-    def interact(self, player):
-        if self.SOLID:
-            return "I am a rock, I am an island."
-        else:
-            return "Whoa!  You found the secret rock!"
-
 class Gem(GameElement):
     IMAGE = "BlueGem"
     SOLID = False
 
     def interact(self, player):
         player.inventory.append(self)
-        return "You just acquired a gem!  You have %d items." % len(player.inventory)
+        GAME_BOARD.draw_msg("You just acquired a gem!  You have %d items!" %(len(player.inventory)))
+
+class Wall(GameElement):
+    IMAGE = "Wall"
+    SOLID = True
+
+class TallTree(GameElement):
+    IMAGE = "TallTree"
+    SOLID = True
+
+
+class GrassBlock(GameElement):
+    IMAGE = "GrassBlock"
+
+class NPC(GameElement):
+    IMAGE = "Horns"
+    SOLID = True
+
+    def interact(self, player):
+        GAME_BOARD.draw_msg("Hello!")
+
+
+
+class Rock(GameElement):
+    IMAGE = "Rock"
+    SOLID = True
 
 class Character(GameElement):
-    IMAGE = "Boy"
+    IMAGE = "Girl"
 
     def __init__(self):
         GameElement.__init__(self)
@@ -50,16 +64,24 @@ class Character(GameElement):
             return (self.x+1, self.y)
         return None
 
+
     def keyboard_handler(self, symbol, modifier):
         direction = None
         if symbol == key.UP:
             direction = "up"
+            self.board.draw_msg('%s says: "You pressed up!"' % self.IMAGE)
+        elif symbol == key.SPACE:
+            direction = "no direction"
+            self.board.erase_msg()
         elif symbol == key.DOWN:
             direction = "down"
+            self.board.draw_msg('%s says: "You pressed down!"' % self.IMAGE)
         elif symbol == key.LEFT:
             direction = "left"
+            self.board.draw_msg('%s says: "You pressed left!"' % self.IMAGE)
         elif symbol == key.RIGHT:
             direction = "right"
+            self.board.draw_msg('%s says: "You pressed right!"' % self.IMAGE)
 
         if direction:
             next_location = self.next_pos(direction)
@@ -68,29 +90,38 @@ class Character(GameElement):
                 next_y = next_location[1]
 
                 existing_el = self.board.get_el(next_x, next_y)
+                print type(existing_el)
 
-                message = ""
                 if existing_el:
-                    message = existing_el.interact(self)
+                    existing_el.interact(self)
 
-                if message:
-                    self.board.draw_msg(message)
-                else:
-                    self.board.erase_msg()
+                # print 3, "Checking existing_el"
+                if existing_el and isinstance(existing_el, NPC):
+                    self.board.draw_msg("Hello!")    
+                    # print 3.1, isinstance(existing_el, NPC)
 
-                if existing_el is None or not existing_el.SOLID:
+                elif existing_el and existing_el.SOLID:
+                    self.board.draw_msg("There's something in my way!")
+                elif existing_el is None or not existing_el.SOLID:
                     self.board.del_el(self.x, self.y)
                     self.board.set_el(next_x, next_y, self)
 
-pass
+
 ####   End class definitions    ####
+
+
+
 
 def initialize():
     """Put game initialization code here"""
 
     rock_positions = [
-        (2, 1), (1, 2), (3, 2), (2, 3)
-    ]
+        (2,1),
+        (1,2),
+        (3,2),
+        (2,3)
+        ]
+
     rocks = []
 
     for pos in rock_positions:
@@ -99,17 +130,36 @@ def initialize():
         GAME_BOARD.set_el(pos[0], pos[1], rock)
         rocks.append(rock)
 
-    # Make one of the rocks not solid
     rocks[-1].SOLID = False
 
-    gem = Gem()
-    GAME_BOARD.register(gem)
-    GAME_BOARD.set_el(3, 1, gem)
+
+    talltree_positions = [
+        (1,3),
+        (0,1)
+        ]
+
+    talltrees = []
+
+    for tpos in talltree_positions:
+        talltree = TallTree()
+        GAME_BOARD.register(talltree)
+        GAME_BOARD.set_el(tpos[0], tpos[1], talltree)
+        talltrees.append(talltree)
+
+    guide = NPC()
+    GAME_BOARD.register(guide)
+    GAME_BOARD.set_el(1, 1, guide)
+
 
     player = Character()
     GAME_BOARD.register(player)
     GAME_BOARD.set_el(2, 2, player)
 
-    GAME_BOARD.draw_msg("This game is wicked awesome.") 
+    GAME_BOARD.draw_msg("This game is wicked awesome!")
 
-    pass
+    gem = Gem()
+    GAME_BOARD.register(gem)
+    GAME_BOARD.set_el(3, 1, gem)
+
+
+

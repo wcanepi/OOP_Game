@@ -120,6 +120,21 @@ def initialize():
 
     rocks[-1].SOLID = False
 
+
+    talltree_positions = [
+        (1,3),
+        (0,1)
+        ]
+
+    talltrees = []
+
+    for tpos in talltree_positions:
+        talltree = TallTree()
+        GAME_BOARD.register(talltree)
+        GAME_BOARD.set_el(tpos[0], tpos[1], talltree)
+        talltrees.append(talltree)
+
+        
     player = Character()
     GAME_BOARD.register(player)
     GAME_BOARD.set_el(2, 2, player)
