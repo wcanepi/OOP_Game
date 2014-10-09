@@ -9,8 +9,8 @@ GAME_BOARD = None
 DEBUG = False
 ######################
 
-GAME_WIDTH = 5
-GAME_HEIGHT = 5
+GAME_WIDTH = 7
+GAME_HEIGHT = 7
 
 #### Put class definitions here ####
 class Gem(GameElement):
@@ -131,11 +131,15 @@ def initialize():
         rocks.append(rock)
 
     rocks[-1].SOLID = False
+    wall_positions = []
+        
+
+    walls = []
 
 
     talltree_positions = [
         (1,3),
-        (0,1)
+        (4,6)
         ]
 
     talltrees = []
