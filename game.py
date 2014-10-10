@@ -45,6 +45,17 @@ class TallTree(GameElement):
     IMAGE = "TallTree"
     SOLID = True
 
+class DoorOpen(GameElement):
+    IMAGE = "DoorOpen"
+    SOLID = True
+
+    def interact(self, player):
+        GAME_BOARD.draw_msg("Move forward, not backwards!")
+
+
+class DoorClosed(GameElement):
+    IMAGE = "DoorClosed"
+    SOLID = True
 
 
 class GrassBlock(GameElement):
@@ -228,6 +239,8 @@ def place_icecube(x, y):
     GAME_BOARD.register(icecube)
     GAME_BOARD.set_el(x, y, icecube)
 
+
+
 def get_wall_positions(x, y):
     # list init to hold position values
 
@@ -237,8 +250,6 @@ def get_wall_positions(x, y):
     x_pos = [0, x]
     y_pos = [0, y]
 
-    # x = GAME_WIDTH -1
-    # y = GAME_HEIGHT - 1
 
         #for loop to create a range of numbers for x while y is 0
 
@@ -258,6 +269,7 @@ def get_wall_positions(x, y):
                 position.append(temp_pos)
             # else:
             #     continue
+    # print position
 
     return position
 
@@ -284,17 +296,17 @@ def initialize():
 
     # rocks[-1].SOLID = False
 
-    water_positions = [
-        (1,1),
-        (1,2),
-        (2,1)]
+    # water_positions = [
+    #     (1,1),
+    #     (1,2),
+    #     (2,1)]
 
-    waterblocks = []
-    for wbpos in water_positions:
-        water = Water()
-        GAME_BOARD.register(water)
-        GAME_BOARD.set_el(wbpos[0], wbpos[1], water)
-        waterblocks.append(water)
+    # waterblocks = []
+    # for wbpos in water_positions:
+    #     water = Water()
+    #     GAME_BOARD.register(water)
+    #     GAME_BOARD.set_el(wbpos[0], wbpos[1], water)
+    #     waterblocks.append(water)
 
 
     wall_position = get_wall_positions((GAME_WIDTH-1), (GAME_HEIGHT-1))
@@ -304,6 +316,12 @@ def initialize():
         GAME_BOARD.register(wall)
         GAME_BOARD.set_el(wpos[0], wpos[1], wall)
         walls.append(wall)
+    walls[1].SOLID = False
+
+
+    opendoor = DoorOpen()
+    GAME_BOARD.register(opendoor)
+    GAME_BOARD.set_el(1, 0, opendoor)
 
 
     talltree_positions = [
@@ -326,7 +344,7 @@ def initialize():
 
     player = Character()
     GAME_BOARD.register(player)
-    GAME_BOARD.set_el(2, 2, player)
+    GAME_BOARD.set_el(1, 1, player)
 
     GAME_BOARD.draw_msg("This game is wicked awesome!")
 
