@@ -27,13 +27,15 @@ class Gem(GameElement):
 
 class GreenGem(Gem):
     IMAGE = "GreenGem"
-    NAME = "GreenGem"
+    NAME = "Emerald"
 
 class OrangeGem(Gem):
     IMAGE = "OrangeGem"
+    NAME = "Sunstone"
 
 class BlueGem(Gem):
     IMAGE = "BlueGem"
+    NAME = "Sapphire"
 
 class Wall(GameElement):
     IMAGE = "Wall"
@@ -55,6 +57,12 @@ class NPC(GameElement):
     def interact(self, player):
         GAME_BOARD.draw_msg("Hello! Watch out for Dragons! You might be safe with gems")
 
+class Water(GameElement):
+    IMAGE = "WaterBlock"
+    SOLID = True
+
+    def interact(self, player):
+        GAME_BOARD.draw_msg("I can't swim! Turn around.")
 
 
 class Rock(GameElement):
@@ -64,9 +72,9 @@ class Rock(GameElement):
 class Dragon(GameElement):
     IMAGE = "GreenDragon"
     SOLID = True 
+    LIVE = False
 
     def interact(self, player):
-
         self.board.draw_msg("Dragon blows fire! You are dead...")
         player.board.del_el(player.x, player.y)
         place_ashes(player.x, player.y)
@@ -76,25 +84,75 @@ class GreenDragon(Dragon):
     SOLID = True
 
     def interact(self, player):
-        print "GreenDragon", GreenGem in player.inventory
+
         for i in player.inventory:
-            print i.NAME
-        print player.inventory
-        if GreenGem in player.inventory:
+            if i.NAME == "Emerald":
+                self.LIVE = True
+
+        if self.LIVE == True:
+            self.board.draw_msg("Green Dragon runs away from magic %s" % i.NAME)
             GreenDragon.SOLID = False
             self.board.del_el(self.x, self.y)
             player.board.del_el(player.x, player.y)
             player.board.set_el(self.x, self.y, player)
-
         else:
+           self.board.draw_msg("Green Dragon eats you and poops")
            player.board.del_el(player.x, player.y)
-           place_ashes(player.x, player.y)                    
-           # player.board.set_el(player.x, player.y, player)
+           place_poop(player.x, player.y)                    
+
+class BlueDragon(Dragon):
+    IMAGE = "BlueDragon"
+    SOLID = True
+
+    def interact(self, player):
+
+        for i in player.inventory:
+            if i.NAME == "Sapphire":
+                self.LIVE = True
+
+        if self.LIVE == True:
+            self.board.draw_msg("Magic %s makes Blue Dragon spontaneously combust" % i.NAME)
+            BlueDragon.SOLID = False
+            self.board.del_el(self.x, self.y)
+            player.board.del_el(player.x, player.y)
+            player.board.set_el(self.x, self.y, player)
+        else:
+           self.board.draw_msg("Blue Dragon freezes you! You are dead...")
+           player.board.del_el(player.x, player.y)
+           place_icecube(player.x, player.y)
+
+class OrangeDragon(Dragon):
+    IMAGE = "OrangeDragon"
+    SOLID = True
+
+    def interact(self, player):
+
+        for i in player.inventory:
+            if i.NAME == "Sunstone":
+                self.board.draw_msg("Magic %s makes Orange Dragon homesick. He flies home." % i.NAME)
+                OrangeDragon.SOLID = False
+                self.board.del_el(self.x, self.y)
+                player.board.del_el(player.x, player.y)
+                player.board.set_el(self.x, self.y, player)
+            else:
+               self.board.draw_msg("Orange Dragon! You are dead...")
+               player.board.del_el(player.x, player.y)
+               place_ashes(player.x, player.y)  
+
+
 
  
 class Ashes(GameElement):
     IMAGE = "Ashes"
     SOLID = True
+
+class IceCube(GameElement):
+    IMAGE = "IceCube"
+    SOLID = True
+
+class Poop(GameElement):
+    IMAGE = "Poop"
+    SOLID = True       
 
 class Character(GameElement):
     IMAGE = "Girl"
@@ -158,6 +216,18 @@ def place_ashes(x, y):
     GAME_BOARD.register(ashes)
     GAME_BOARD.set_el(x, y, ashes)
 
+def place_poop(x, y):
+    poop = Poop()
+    # place_ashes_position = (x, y)
+    GAME_BOARD.register(poop)
+    GAME_BOARD.set_el(x, y, poop)
+
+def place_icecube(x, y):
+    icecube = IceCube()
+    # place_ashes_position = (x, y)
+    GAME_BOARD.register(icecube)
+    GAME_BOARD.set_el(x, y, icecube)
+
 def get_wall_positions(x, y):
     # list init to hold position values
 
@@ -214,6 +284,18 @@ def initialize():
 
     # rocks[-1].SOLID = False
 
+    water_positions = [
+        (1,1),
+        (1,2),
+        (2,1)]
+
+    waterblocks = []
+    for wbpos in water_positions:
+        water = Water()
+        GAME_BOARD.register(water)
+        GAME_BOARD.set_el(wbpos[0], wbpos[1], water)
+        waterblocks.append(water)
+
 
     wall_position = get_wall_positions((GAME_WIDTH-1), (GAME_HEIGHT-1))
     walls = []
@@ -259,6 +341,11 @@ def initialize():
     green_dragon = GreenDragon()
     GAME_BOARD.register(green_dragon)
     GAME_BOARD.set_el(4, 3, green_dragon)
+
+    blue_dragon = BlueDragon()
+    GAME_BOARD.register(blue_dragon)
+    GAME_BOARD.set_el(5, 3, blue_dragon)
+
 
 
 

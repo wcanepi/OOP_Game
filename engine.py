@@ -49,7 +49,9 @@ def setup_images():
             "GreenDragon" : "Green Dragon.png",
             "OrangeDragon" : "Orange Dragon.png",
             "BlueDragon" : "Blue Dragon.png",
-            "Ashes" : "ashes.png"
+            "Ashes" : "ashes.png",
+            "IceCube" : "icecube.png",
+            "Poop" : "poop.png"
             }
 
     for k,v in filenames.items():
